@@ -1,0 +1,444 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Notes App API",
+    "version": "1.0.0",
+    "description": "API Documentation for Note App"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/api/user/register": {
+      "post": {
+        "summary": "Register User",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "example": {
+                  "email": "johndoe@gmail.com",
+                  "password": "johndoepassword"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "user": {
+                        "id": 1,
+                        "email": "johndoe@example.com",
+                        "password": "$2b$10$SpG0A0E9or4bDQj89Iv1iupq5NEA8RkSYHn9InrnQxdesjewQej1S",
+                        "updatedAt": "2024-12-13T12:50:00.185Z",
+                        "createdAt": "2024-12-13T12:50:00.185Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email is already registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "email": "johndoe2@example.com",
+                      "password": "securepassword"
+                    },
+                    "status": 400,
+                    "message": "Email is already registered."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "User Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "example": {
+                  "email": "johndoe@gmail.com",
+                  "password": "johndoepassword"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTczNDA5NDM5OSwiZXhwIjoxNzM0MDk3OTk5fQ.a3AGGHMMEDZUbahagcb9HJkL1J7FU-Zuz-ksUm2zT4s"
+                    },
+                    "statusCode": 200,
+                    "message": "Login successful."
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid credentials.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "email": "johndoe@example.com",
+                      "password": "securepassword"
+                    },
+                    "status": 404,
+                    "message": "Invalid credentials."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/note": {
+      "post": {
+        "summary": "Create Note",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "workType": { "type": "string", "enum": ["Personal", "Work"] }
+                },
+                "example": {
+                  "title": "My First Note",
+                  "content": "This is a note content.",
+                  "workType": "Personal"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Note created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "title": "My First Note",
+                      "content": "This is a note content.",
+                      "workType": "Personal"
+                    },
+                    "status": 401,
+                    "message": "Invalid or expired token."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Given note type is not valid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "title": "My First Note",
+                      "content": "This is a note content.",
+                      "workType": "Favourite"
+                    },
+                    "status": 400,
+                    "message": "Given note type is not valid."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/note/all": {
+      "post": {
+        "summary": "Get Notes",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "Notes retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "note": [
+                        {
+                          "id": 1,
+                          "title": "My First Note",
+                          "content": "This is a note content.",
+                          "workType": "Personal",
+                          "userId": 1,
+                          "createdAt": "2024-12-13T14:04:36.000Z",
+                          "updatedAt": "2024-12-13T14:04:36.000Z"
+                        }
+                      ]
+                    },
+                    "statusCode": 200,
+                    "message": "Notes retrieved successfully."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/note/:noteId": {
+      "parameters": [
+        {
+          "name": "noteId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "ID of the note to retrieve"
+        }
+      ],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "post": {
+        "summary": "Get Note",
+        "parameters": [
+          {
+            "name": "noteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID of the note to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "note": {
+                        "id": 1,
+                        "title": "My First Note",
+                        "content": "This is a note content.",
+                        "workType": "Personal",
+                        "userId": 1,
+                        "createdAt": "2024-12-13T14:04:36.000Z",
+                        "updatedAt": "2024-12-13T14:04:36.000Z"
+                      }
+                    },
+                    "statusCode": 200,
+                    "message": "Note retrieved successfully."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Note not found or not owned by you.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {},
+                    "status": 400,
+                    "message": "Note not found or not owned by you."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Note",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "workType": { "type": "string", "enum": ["Personal", "Work"] }
+                },
+                "example": {
+                  "title": "Updated Note Title",
+                  "content": "Updated content.",
+                  "workType": "Work"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "note": {
+                        "id": 3,
+                        "title": "Updated Note Title",
+                        "content": "Updated note content.",
+                        "workType": "Work",
+                        "userId": 2,
+                        "createdAt": "2024-12-13T12:43:55.000Z",
+                        "updatedAt": "2024-12-13T12:46:27.955Z"
+                      }
+                    },
+                    "statusCode": 200,
+                    "message": "Note updated successfully."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Given note type is not valid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {
+                      "title": "Updated Note Title",
+                      "content": "Updated note content.",
+                      "workType": "Favourite"
+                    },
+                    "status": 500,
+                    "message": "res is not defined"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Note",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {},
+                    "statusCode": 200,
+                    "message": "Note updated successfully."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Note not found or not owned by you.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "data": {},
+                    "status": 400,
+                    "message": "Note not found or not owned by you."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
